@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import br.com.sgci.controller.schema.EnderecoMapper;
 import br.com.sgci.controller.schema.EnderecoResponse;
+import br.com.sgci.controller.schema.PessoaFilter;
 import br.com.sgci.controller.schema.PessoaMapper;
 import br.com.sgci.controller.schema.PessoaReq;
 import br.com.sgci.controller.schema.PessoaResponse;
@@ -16,6 +22,7 @@ import br.com.sgci.controller.schema.PessoaUpd;
 import br.com.sgci.model.Endereco;
 import br.com.sgci.model.Pessoa;
 import br.com.sgci.repository.PessoaRepository;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -83,10 +90,61 @@ public class PessoaManager {
 		pessoaRepository.delete(pessoa);
 	}
 
-	public List<PessoaResponse> findAll()
+	public List<PessoaResponse> findAll(@Valid PessoaFilter filtros)
 	{
 		List<PessoaResponse> listResponse = new ArrayList<PessoaResponse>();
-		List<Pessoa> listPessoaBD = pessoaRepository.findAll();
+		//Filtros Dinâmicos
+		Specification<Pessoa> filtrosCustomizados = (root, query, cb) ->
+		{
+			List<Predicate> condicoes = new ArrayList<>();
+
+			if (filtros.getNome() != null)
+			{
+				condicoes.add(cb.like(root.get("nome"), "%" + filtros.getNome() + "%"));
+			}
+			if (filtros.getCep() != null)
+			{
+				condicoes.add(cb.equal(root.get("endereco").get("cep"), filtros.getCep()));
+			}
+			if (filtros.getEstado() != null)
+			{
+				condicoes.add(cb.equal(root.get("endereco").get("estado"), filtros.getEstado()));
+			}
+			if (filtros.getCidade() != null)
+			{
+				condicoes.add(cb.equal(root.get("endereco").get("cidade"), filtros.getCidade()));
+			}
+			if (filtros.getTipo() != null)
+			{
+				condicoes.add(cb.equal(root.get("pessoa"), filtros.getTipo()));
+			}
+			if (filtros.getDocumento() != null)
+			{
+				condicoes.add(cb.equal(root.get("pessoa"), filtros.getDocumento()));
+			}
+
+			return cb.and(condicoes.toArray(Predicate[]::new));
+		};
+		
+		// -------- ORDENAÇÃO SEGURA --------
+        String ordenarPor = filtros.getOrdenarPor();
+
+        if (ordenarPor == null || ordenarPor.isBlank()) {
+            ordenarPor = "id";
+        }
+
+        Direction direction = filtros.getDirection() != null
+                ? filtros.getDirection()
+                : Direction.ASC;
+
+        PageRequest pageRequest = PageRequest.of(
+                filtros.getPage(),
+                filtros.getSize(),
+                Sort.by(direction, ordenarPor)
+        );
+		
+		Page<Pessoa> listPessoaBD = pessoaRepository.findAll(filtrosCustomizados, pageRequest);
+		
 		listPessoaBD.forEach(item ->
 		{
 			EnderecoResponse enderecoResponse = EnderecoMapper.INSTANCE.toEnderecoResponse(item.getEndereco()); 

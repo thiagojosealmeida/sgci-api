@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.sgci.controller.schema.PessoaFilter;
 import br.com.sgci.controller.schema.PessoaReq;
 import br.com.sgci.controller.schema.PessoaResponse;
 import br.com.sgci.controller.schema.PessoaUpd;
@@ -52,9 +54,9 @@ public class PessoaController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<PessoaResponse>> findAll()
+	public ResponseEntity<List<PessoaResponse>> findAll(@Valid @ModelAttribute PessoaFilter filtros)
 	{
-		return ResponseEntity.ok(pessoaManager.findAll());
+		return ResponseEntity.ok(pessoaManager.findAll(filtros));
 	}
 
 	@GetMapping(path = {"{idPessoa}"})
