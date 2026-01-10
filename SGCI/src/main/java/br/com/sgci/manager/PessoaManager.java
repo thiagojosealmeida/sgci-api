@@ -19,6 +19,7 @@ import br.com.sgci.controller.schema.PessoaMapper;
 import br.com.sgci.controller.schema.PessoaReq;
 import br.com.sgci.controller.schema.PessoaResponse;
 import br.com.sgci.controller.schema.PessoaUpd;
+import br.com.sgci.controller.schema.ResponsePagedCommon;
 import br.com.sgci.model.Endereco;
 import br.com.sgci.model.Pessoa;
 import br.com.sgci.repository.PessoaRepository;
@@ -90,9 +91,8 @@ public class PessoaManager {
 		pessoaRepository.delete(pessoa);
 	}
 
-	public List<PessoaResponse> findAll(@Valid PessoaFilter filtros)
+	public ResponsePagedCommon<PessoaResponse> findAll(@Valid PessoaFilter filtros)
 	{
-		List<PessoaResponse> listResponse = new ArrayList<PessoaResponse>();
 		//Filtros Dinâmicos
 		Specification<Pessoa> filtrosCustomizados = (root, query, cb) ->
 		{
@@ -144,6 +144,8 @@ public class PessoaManager {
         );
 		
 		Page<Pessoa> listPessoaBD = pessoaRepository.findAll(filtrosCustomizados, pageRequest);
+
+		List<PessoaResponse> listResponse = new ArrayList<PessoaResponse>();
 		
 		listPessoaBD.forEach(item ->
 		{
@@ -151,7 +153,7 @@ public class PessoaManager {
 			PessoaResponse pessoaResponse = PessoaMapper.INSTANCE.toPessoaResponse(item, enderecoResponse);
 			listResponse.add(pessoaResponse);
 		});
-		return listResponse;
+		return new ResponsePagedCommon<PessoaResponse>(listResponse, listPessoaBD.getTotalElements(), listPessoaBD.getTotalPages(), listPessoaBD.getSize());
 	}
 
 	public PessoaResponse findById(Long idPessoa)
