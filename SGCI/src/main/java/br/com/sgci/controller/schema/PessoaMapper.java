@@ -10,6 +10,8 @@ import br.com.sgci.model.Pessoa;
 public interface PessoaMapper 
 {
 	PessoaMapper INSTANCE = Mappers.getMapper(PessoaMapper.class);
+	
 	@Mapping(source = "enderecoResponse", target = "endereco")
+	@Mapping(source = "pessoa.id", target = "id")
 	PessoaResponse toPessoaResponse(Pessoa pessoa, EnderecoResponse enderecoResponse);
 }

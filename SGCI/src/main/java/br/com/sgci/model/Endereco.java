@@ -44,7 +44,7 @@ public class Endereco {
 	@Column(name = "NUMERO")
 	private Integer numero;
 
-	protected Endereco() {
+	public Endereco() {
 	    // construtor padrão exigido pelo JPA
 	}
 	
