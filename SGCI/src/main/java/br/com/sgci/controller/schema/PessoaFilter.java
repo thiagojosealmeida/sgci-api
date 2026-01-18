@@ -1,9 +1,12 @@
 package br.com.sgci.controller.schema;
 
+import br.com.sgci.model.EstadoCivilEnum;
 import br.com.sgci.model.TipoPessoaEnum;
 
 public class PessoaFilter extends FilterPageable
 {
+	public Long id;
+	
 	public String nome;
 
 	public String cep;
@@ -15,6 +18,18 @@ public class PessoaFilter extends FilterPageable
 	public TipoPessoaEnum tipo;
 	
 	public String documento;
+	
+	public String profissao;
+
+	public EstadoCivilEnum estadoCivil;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getNome() {
 		return nome;
@@ -62,5 +77,21 @@ public class PessoaFilter extends FilterPageable
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
+	}
+
+	public String getProfissao() {
+		return profissao;
+	}
+
+	public void setProfissao(String profissao) {
+		this.profissao = profissao;
+	}
+
+	public EstadoCivilEnum getEstadoCivil() {
+		return estadoCivil;
+	}
+
+	public void setEstadoCivil(EstadoCivilEnum estadoCivil) {
+		this.estadoCivil = estadoCivil;
 	}
 }

@@ -68,7 +68,7 @@ public class PessoaManager {
 		pessoa.setNome(upd.nome());
 		pessoa.setTipo(upd.tipo());
 		pessoa.setDocumento(upd.documento());
-		pessoa.setTx_profissao(upd.profissao());
+		pessoa.setProfissao(upd.profissao());
 		pessoa.setEstadoCivil(upd.estadoCivil());
 		
 		//Atualização de dados de endereco
@@ -98,6 +98,10 @@ public class PessoaManager {
 		{
 			List<Predicate> condicoes = new ArrayList<>();
 
+			if (filtros.getId() != null)
+			{
+				condicoes.add(cb.equal(root.get("id"), filtros.getId()));
+			}
 			if (filtros.getNome() != null)
 			{
 				condicoes.add(cb.like(root.get("nome"), "%" + filtros.getNome() + "%"));
@@ -121,6 +125,14 @@ public class PessoaManager {
 			if (filtros.getDocumento() != null)
 			{
 				condicoes.add(cb.equal(root.get("pessoa"), filtros.getDocumento()));
+			}
+			if (filtros.getProfissao() != null)
+			{
+				condicoes.add(cb.equal(root.get("profissao"), filtros.getProfissao()));
+			}
+			if (filtros.getEstadoCivil() != null)
+			{
+				condicoes.add(cb.equal(root.get("estadoCivil"), filtros.getEstadoCivil()));
 			}
 
 			return cb.and(condicoes.toArray(Predicate[]::new));
@@ -153,7 +165,7 @@ public class PessoaManager {
 			PessoaResponse pessoaResponse = PessoaMapper.INSTANCE.toPessoaResponse(item, enderecoResponse);
 			listResponse.add(pessoaResponse);
 		});
-		return new ResponsePagedCommon<PessoaResponse>(listResponse, listPessoaBD.getTotalElements(), listPessoaBD.getTotalPages(), listPessoaBD.getSize());
+		return new ResponsePagedCommon<PessoaResponse>(listResponse, listPessoaBD.getTotalElements(), listPessoaBD.getTotalPages(), listPessoaBD.getSize(), 0);
 	}
 
 	public PessoaResponse findById(Long idPessoa)

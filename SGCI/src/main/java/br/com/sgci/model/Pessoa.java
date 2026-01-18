@@ -45,8 +45,8 @@ public class Pessoa {
 	
 	@NotNull
 	@Size(max = 255)
-	@Column(name = "TX_PROFISSAO")
-	private String tx_profissao;
+	@Column(name = "PROFISSAO")
+	private String profissao;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -62,14 +62,14 @@ public class Pessoa {
 			@NotNull @Size(max = 255) String nome, 
 			@NotNull TipoPessoaEnum tipo,
 			@NotNull @Size(max = 255) String documento, 
-			@NotNull @Size(max = 255) String tx_profissao,
+			@NotNull @Size(max = 255) String profissao,
 			@NotNull EstadoCivilEnum estadoCivil) {
 		super();
 		this.endereco = endereco;
 		this.nome = nome;
 		this.tipo = tipo;
 		this.documento = documento;
-		this.tx_profissao = tx_profissao;
+		this.profissao = profissao;
 		this.estadoCivil = estadoCivil;
 	}
 
@@ -113,12 +113,12 @@ public class Pessoa {
 		this.documento = documento;
 	}
 
-	public String getTx_profissao() {
-		return tx_profissao;
+	public String getProfissao() {
+		return profissao;
 	}
 
-	public void setTx_profissao(String tx_profissao) {
-		this.tx_profissao = tx_profissao;
+	public void setProfissao(String profissao) {
+		this.profissao = profissao;
 	}
 
 	public EstadoCivilEnum getEstadoCivil() {
